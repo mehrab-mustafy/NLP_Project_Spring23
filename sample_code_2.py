@@ -1,5 +1,5 @@
 def agreement():
-    return 2
+    return 'response from agreement()'
 
 def verbs():
-    return 2
+    return 'response from verbs()'
