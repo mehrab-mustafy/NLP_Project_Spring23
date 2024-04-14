@@ -12,17 +12,99 @@ nlp = spacy.load("en_core_web_sm")
 
 
 def num_sentences(text):
-    text = 'I eating a sandwich'
-    tokens = nltk.word_tokenize(text)
-    pos_tags = nltk.pos_tag(tokens)
-    pos_tags_list = [tag[1] for tag in pos_tags]
+    # basic sentence separator
+    # text = 'I want to do well I am sad'
+    # text = 'For example, it would be a lot more useful to understand why and how Hitler came to power in Germany, rather than the dates of particular events.'
+    # text = 'I told him that I went to the market yesterday'
+    sentences = []
+    current_sentence = ''
+    sentence_delimiters = ['.', '!', '?'] 
+    for char in text:
+        if char not in sentence_delimiters:
+            current_sentence += char
+        else:
+            current_sentence += char
+            sentences.append(current_sentence.strip())
+            current_sentence = ''
+    if current_sentence:
+        sentences.append(current_sentence.strip())
+    sent_count = len(sentences)
     
+    finite_verbs = ['VBD','VBP','VBZ']
+    non_finite_verbs = ['VBG', 'VBN']
+    ambiguous_verbs = ['VB']
+    conjunctions = ['CC']
+    others = ['WDT', 'XX']
+
+    for sentence in sentences:
+        finite_verb_count = 0
+        non_finite_verb_count = 0
+        conjunction_count = 0
+        other_count = 0
+        uppercase_count = 0
+        additional_sent_count = 0
+        tokens = nltk.word_tokenize(sentence)
+        pos_tags = nltk.pos_tag(tokens)
+        pos_tags_list = [tag[1] for tag in pos_tags]
+        for i in range (len(tokens)):
+            word = tokens[i].lower()
+            if word in ['that', 'because']:
+                pos_tags_list[i] = 'XX'
+        words = sentence.split()
+        uppercase_count = 0
+        for word in words:
+            if word[0].isupper() and word != "I":
+                pos_tag = nltk.pos_tag([word])[0][1]
+                #print(pos_tag)
+                if pos_tag not in ['NN', 'NNP', 'NNPS']:
+                    uppercase_count += 1
+        # print(uppercase_count)
+        # print(pos_tags_list)
+        for tags in pos_tags_list:
+            if tags in finite_verbs:
+                finite_verb_count += 1
+            if tags in non_finite_verbs:
+                non_finite_verb_count += 1
+            if tags in conjunctions:
+                conjunction_count += 1
+            if tags in others:
+                other_count += 1
+        if uppercase_count > 1:
+            sent_count = sent_count + uppercase_count - 1
+            # print(sentence, uppercase_count, sent_count, '1')
+        else:
+            if (finite_verb_count - conjunction_count - other_count == 1):
+                additional_sent_count = 0
+                sent_count = sent_count + additional_sent_count
+                # print(sentence, sent_count, '2')
+            elif (finite_verb_count - conjunction_count - other_count > 1):
+                # print(finite_verb_count, conjunction_count, other_count)
+                additional_sent_count = finite_verb_count - conjunction_count - other_count - 1
+                sent_count = sent_count + additional_sent_count
+                # print(sentence, sent_count, '3')
+            else:
+                additional_sent_count = 0
+                sent_count = sent_count + additional_sent_count
+                # print(sentence, sent_count,'4')   
     
-    return pos_tags_list
+    #print(sentence, sent_count)
+    # print(sent_count)
+    # print(pos_tags_list)
+    if sent_count <= 5:
+        return 1
+    elif sent_count > 5 and sent_count <= 15:
+        return 2
+    elif sent_count > 15 and sent_count <= 20:
+        return 3 
+    elif sent_count > 20 and sent_count <= 30:
+        return 4
+    else:
+        return 5
 
 
-spell = SpellChecker()
+
 def spelling_mistakes(text):
+    spell = SpellChecker()
     doc = nlp(text)
     misspelled_words = []
     for token in doc:
