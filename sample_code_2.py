@@ -8,6 +8,7 @@ nltk.download('punkt')
 nltk.download('words')
 nltk.download('averaged_perceptron_tagger')
 
+#split essay into sentences for every '.'
 def sentence_splitter(essay):
     sentences = []
     current_sentence = ''
@@ -23,6 +24,7 @@ def sentence_splitter(essay):
         sentences.append(current_sentence.strip())
     return sentences
 
+# preprocesses tag list so that nouns linked by a CC are converted to the plural form of the noun
 def tags_after_token_preprocessing(tokens):
     tags = nltk.pos_tag(tokens)
     tags = [tag for _, tag in tags]
@@ -34,6 +36,7 @@ def tags_after_token_preprocessing(tokens):
                 tags[i+1]=''
     return [x for x in tags if x not in ['']]
 
+# defines rule set when subject is NN, NNS, NNP, or NNS and returns boolean value representing whether a subject-verb mismatch has been found
 def subject_verb_agreement_noun(subject_tag, corresponding_word, verb_tag):
     # define rules for subject-verb agreement
     tag_rule_set = {}
@@ -52,6 +55,7 @@ def subject_verb_agreement_noun(subject_tag, corresponding_word, verb_tag):
         return False
     return True
 
+# defines rule set when subject is PRP and returns boolean value representing whether a subject-verb mismatch has been found
 def subject_verb_agreement_pronoun(corresponding_word, verb_tag):
     # define rules for subject-verb agreement
     corresponding_word = corresponding_word.lower()
@@ -71,6 +75,8 @@ def subject_verb_agreement_pronoun(corresponding_word, verb_tag):
         return False
     return True
 
+# checks sequence of tags and uses subject-verb agreement functions above to check for mismatch
+# returns a score from 1-5 depending on number of errors found
 def agreement(essay):
     # testing subject-verb agreement
     # test_sent = 'I told him that I will visited tomorrow'
@@ -113,6 +119,7 @@ def agreement(essay):
     else:
         return 5
 
+# defines rule set when subject is PRP and returns boolean value representing whether a subject-verb mismatch has been found
 def verb_tense_agreement(md_word, verb_tag):
     # define rules for subject-tense agreement
     rule_set = {}
@@ -146,6 +153,8 @@ def verb_tense_agreement(md_word, verb_tag):
         return False
     return True
 
+# checks sequence of tags and uses verb-tense agreement function above to check for mismatch
+# returns a score from 1-5 depending on number of errors found
 def verbs(essay):
     # testing verb-tense agreement
     # test_sent = 'The modern society rappresented the perfect ambient to influenced the minds of all the person.'
