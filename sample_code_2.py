@@ -146,10 +146,10 @@ def verb_tense_agreement(md_word, verb_tag):
     md_word = md_word.lower()
     allowed_tags = rule_set.get(md_word, '')
     if verb_tag not in allowed_tags:
-        print('Verb-tense disagreement')
-        print(f'Corresponding word: {md_word}')
-        print(f'Given tag: {verb_tag}')
-        print(f'Expected tag: {allowed_tags}')
+        # print('Verb-tense disagreement')
+        # print(f'Corresponding word: {md_word}')
+        # print(f'Given tag: {verb_tag}')
+        # print(f'Expected tag: {allowed_tags}')
         return False
     return True
 
