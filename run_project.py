@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import os
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
@@ -50,8 +49,12 @@ def main():
     text = df.loc[65, 'file_contents']
     a = num_sentences(text)
     b = spelling_mistakes(text)
-    c_1, c_2, c_3 = agreement(text)
-    d_1, d_2 = verbs(text)
+    c_1 = agreement(text)
+    c_2 = verbs(text)
+    
+    c_3 = 0
+    d_1 = 0
+    d_2 = 0
     
     print(f"a:{a}, b:{b}, c1:{c_1}, c2:{c_2}, c3: {c_3}, d1: {d_1}, d2: {d_2}")
     Final_Score = 2*a - b + c_1 + c_2 + 2*c_3 + 3*d_1 + 2*d_2
