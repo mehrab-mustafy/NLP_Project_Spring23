@@ -146,10 +146,10 @@ def verb_tense_agreement(md_word, verb_tag):
     md_word = md_word.lower()
     allowed_tags = rule_set.get(md_word, '')
     if verb_tag not in allowed_tags:
-        # print('Verb-tense disagreement')
-        # print(f'Corresponding word: {md_word}')
-        # print(f'Given verb tag: {verb_tag}')
-        # print(f'Expected verb tag: {allowed_tags}')
+        print('Verb-tense disagreement')
+        print(f'Corresponding word: {md_word}')
+        print(f'Given tag: {verb_tag}')
+        print(f'Expected tag: {allowed_tags}')
         return False
     return True
 
@@ -169,59 +169,46 @@ def verbs(essay):
     # """
     sentences = sentence_splitter(essay)
     error_count = 0
-    for sentence in sentences:
-        tokens = word_tokenize(sentence)
-        pos_tags = tags_after_token_preprocessing(tokens)
-        # print(pos_tags)
-        for i in range(len(pos_tags)-1):
-            # print(i)
-            if pos_tags[i] in ['MD', 'VBN'] and pos_tags[i+1] in ['RB'] and i+2 < len(pos_tags):
-                md_word = tokens[i]
-                # print(md_word)
-                verb_tag = pos_tags[i+2]
-                # print(verb_tag)
-                if verb_tense_agreement(md_word, verb_tag)==False:
-                    # print(f'POS tag of word: {pos_tags[i]}')
-                    error_count += 1
-            if pos_tags[i] in ['MD', 'VBN', 'VBD'] and pos_tags[i+1] in ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']:
-                md_word = tokens[i]
-                # print(md_word)
-                verb_tag = pos_tags[i+1]
-                # print(verb_tag)
-                if verb_tense_agreement(md_word, verb_tag)==False:
-                    # print(f'POS tag of word: {pos_tags[i]}')
-                    error_count += 1
-            if pos_tags[i] in ['VB'] and tokens[i] in ['be'] and pos_tags[i+1] in ['RB'] and pos_tags[i+2] in ['VB'] and i+2 < len(pos_tags):
-                md_word = tokens[i]
-                # print(md_word)
-                verb_tag = pos_tags[i+2]
-                # print(verb_tag)
-                if verb_tense_agreement(md_word, verb_tag)==False:
-                    # print(f'POS tag of word: {pos_tags[i]}')
-                    error_count += 1
-            if pos_tags[i] in ['TO'] and pos_tags[i+1] in ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']:
-                md_word = tokens[i]
-                # print(md_word)
-                verb_tag = pos_tags[i+1]
-                # print(verb_tag)
-                if verb_tense_agreement(md_word, verb_tag)==False:
-                    # print(f'POS tag of word: {pos_tags[i]}')
-                    error_count += 1
-            if tokens[i] in ['am', 'is', 'was', 'are', 'were'] and pos_tags[i+1] in ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']:
-                md_word = tokens[i]
-                # print(md_word)
-                verb_tag = pos_tags[i+1]
-                # print(verb_tag)
-                if verb_tense_agreement(md_word, verb_tag)==False:
-                    # print(f'POS tag of word: {pos_tags[i]}')
-                    error_count += 1
-            # if pos_tags[i] in ['IN'] and pos_tags[i+1] in ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']:
-            #     md_word = pos_tags[i]
-            #     # print(md_word)
-            #     verb_tag = pos_tags[i+1]
-            #     # print(verb_tag)
-            #     if verb_tense_agreement(md_word, verb_tag)==False:
-            #         error_count += 1
+    tokens = word_tokenize(essay)
+    pos_tags = tags_after_token_preprocessing(tokens)
+    print(pos_tags)
+    for i in range(len(pos_tags)-1):
+        # print(i)
+        if pos_tags[i] in ['MD', 'VBP', 'VBN'] and pos_tags[i+1] in ['RB'] and i+2 < len(pos_tags):
+            md_word = tokens[i]
+            # print(md_word)
+            verb_tag = pos_tags[i+2]
+            # print(verb_tag)
+            if verb_tense_agreement(md_word, verb_tag)==False:
+                error_count += 1
+        if pos_tags[i] in ['MD', 'VBP', 'VBN', 'VBD'] and pos_tags[i+1] in ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']:
+            md_word = tokens[i]
+            # print(md_word)
+            verb_tag = pos_tags[i+1]
+            # print(verb_tag)
+            if verb_tense_agreement(md_word, verb_tag)==False:
+                error_count += 1
+        if pos_tags[i] in ['VB'] and tokens[i] in ['be'] and pos_tags[i+1] in ['RB'] and pos_tags[i+2] in ['VB'] and i+2 < len(pos_tags):
+            md_word = tokens[i]
+            # print(md_word)
+            verb_tag = pos_tags[i+2]
+            # print(verb_tag)
+            if verb_tense_agreement(md_word, verb_tag)==False:
+                error_count += 1
+        if pos_tags[i] in ['TO'] and pos_tags[i+1] in ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']:
+            md_word = tokens[i]
+            # print(md_word)
+            verb_tag = pos_tags[i+1]
+            # print(verb_tag)
+            if verb_tense_agreement(md_word, verb_tag)==False:
+                error_count += 1
+        # if pos_tags[i] in ['IN'] and pos_tags[i+1] in ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']:
+        #     md_word = pos_tags[i]
+        #     # print(md_word)
+        #     verb_tag = pos_tags[i+1]
+        #     # print(verb_tag)
+        #     if verb_tense_agreement(md_word, verb_tag)==False:
+        #         error_count += 1
 
     # print(f"Error count: {error_count}")
 
