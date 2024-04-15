@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import nltk
+import sys
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import words
 nltk.download('punkt')
@@ -17,8 +18,6 @@ def read_file_contents(filename, directory):
 
 def main():
     
-    #this_input = input("Enter the Essay to grade: ")
-
     df = pd.read_csv('index.csv', delimiter=';')
     directory = 'essays/'        
     df['file_contents'] = df.apply(lambda row: read_file_contents(row['filename'], directory), axis=1)
@@ -30,27 +29,32 @@ def main():
     # print(max_mistakes, min_mistakes)
     
     # high_grade_df = df[df['grade'] == 'high']
-    # high_grade_df['sent_count'] = high_grade_df['file_contents'].apply(num_sentences)
+    # high_grade_df['sent_count'] = high_grade_df['file_contents'].apply(verbs)
     # max_sent1, min_sent1 = high_grade_df['sent_count'].max(), high_grade_df['sent_count'].min()
-    # # filtered_df = high_grade_df[high_grade_df['sent_count'] == 49]
-
-    # # Access the 'file_contents' column of the filtered DataFrame
-    # # file_contents_49 = filtered_df['file_contents']
-    # # for contents in file_contents_49:
-    # #     print(contents)
             
     # low_grade_df = df[df['grade'] == 'low']
-    # low_grade_df['sent_count'] = low_grade_df['file_contents'].apply(num_sentences)
+    # low_grade_df['sent_count'] = low_grade_df['file_contents'].apply(verbs)
     # max_sent2, min_sent2 = low_grade_df['sent_count'].max(), low_grade_df['sent_count'].min()
 
     # print(max_sent1, min_sent1, (max_sent1+min_sent1)/2)
     # print(max_sent2, min_sent2, (max_sent2+min_sent2)/2)
     
-    text = df.loc[65, 'file_contents']
-    a = num_sentences(text)
-    b = spelling_mistakes(text)
-    c_1 = agreement(text)
-    c_2 = verbs(text)
+    if len(sys.argv) != 2:
+        return
+    file_path = sys.argv[1]
+    try:
+        with open(file_path, 'r') as file:
+            # Read the contents of the file
+            content = file.read()
+    except FileNotFoundError:
+        print("File not found:", file_path)
+    except Exception as e:
+        print("An error occurred:", e)
+        
+    a = num_sentences(content)
+    b = spelling_mistakes(content)
+    c_1 = agreement(content)
+    c_2 = verbs(content)
     
     c_3 = 0
     d_1 = 0

@@ -12,10 +12,10 @@ nlp = spacy.load("en_core_web_sm")
 
 
 def num_sentences(text):
-    # basic sentence separator
-    # text = 'I want to do well I am sad'
-    # text = 'For example, it would be a lot more useful to understand why and how Hitler came to power in Germany, rather than the dates of particular events.'
-    # text = 'I told him that I went to the market yesterday'
+    '''counts the total number of sentences in the essay, first splits using periods
+    after that checks for capitalization, then finite verb counts, then checks whether there
+    are conjunctions/linkers to give the overall number of sentences and associated score. (details provided in the Report file)
+    '''
     sentences = []
     current_sentence = ''
     sentence_delimiters = ['.', '!', '?'] 
@@ -104,6 +104,9 @@ def num_sentences(text):
 
 
 def spelling_mistakes(text):
+    '''
+    uses the spellchecker and Spacy packages to get the total number of spelling mistakes and return the scores accordingly 
+    '''
     spell = SpellChecker()
     doc = nlp(text)
     misspelled_words = []
