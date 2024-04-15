@@ -74,15 +74,15 @@ def subject_verb_agreement_pronoun(corresponding_word, verb_tag):
 def agreement(essay):
     # testing subject-verb agreement
     # test_sent = 'I told him that I will visited tomorrow'
-    essay = """
-        Some people want to try new things while other prefer to do the same that they knew all over their life.  I agree with the statement which says that successful people try to do new things even take risks rathre trying known things.  I agree becuse of severals resons.
+    # essay = """
+    #     Some people want to try new things while other prefer to do the same that they knew all over their life.  I agree with the statement which says that successful people try to do new things even take risks rathre trying known things.  I agree becuse of severals resons.
 
-        The frist reson is that  successful people shoud try to do new things otherwase they will not bring new things.  For example, the Neoten is well- known and pioneeir in this feild.  He looked to the apple which fall down from the tree as other but He looked to this case different from other and asked himself why did it fall.  As a result, he interdouced a new law of movement.
-        Secondly, successful people take risk to do something new.  Forthat, although they will not get  benefit of all things, they can success in something new. 
-        Thirdly,  successful people try to do new things with sometime high risk rathre trying known things. Becuse of high risk they can get high benefits and this according to the statment which says high risk gives sometime high rate. This statement which is high risk gives sometime high rate is mainly used in marking.  
-        Becuse of doing new things and  taking risk I agree with successful people try to do new things even take risks rathre trying known things.  
+    #     The frist reson is that  successful people shoud try to do new things otherwase they will not bring new things.  For example, the Neoten is well- known and pioneeir in this feild.  He looked to the apple which fall down from the tree as other but He looked to this case different from other and asked himself why did it fall.  As a result, he interdouced a new law of movement.
+    #     Secondly, successful people take risk to do something new.  Forthat, although they will not get  benefit of all things, they can success in something new. 
+    #     Thirdly,  successful people try to do new things with sometime high risk rathre trying known things. Becuse of high risk they can get high benefits and this according to the statment which says high risk gives sometime high rate. This statement which is high risk gives sometime high rate is mainly used in marking.  
+    #     Becuse of doing new things and  taking risk I agree with successful people try to do new things even take risks rathre trying known things.  
 
-    """
+    # """
     sentences = sentence_splitter(essay)
     error_count = 0
     for sentence in sentences:
@@ -102,7 +102,16 @@ def agreement(essay):
                 verb_tag = pos_tags[i+1]
                 if subject_verb_agreement_pronoun(corresponding_word, verb_tag)==False:
                     error_count += 1
-    return error_count
+    if error_count>=9:
+        return 1
+    elif error_count>=6 and error_count<=8:
+        return 2
+    elif error_count>=4 and error_count<=5:
+        return 3
+    elif error_count>=2 and error_count<=3:
+        return 4
+    else:
+        return 5
 
 def verb_tense_agreement(md_word, verb_tag):
     # define rules for subject-tense agreement
@@ -140,16 +149,16 @@ def verb_tense_agreement(md_word, verb_tag):
 def verbs(essay):
     # testing verb-tense agreement
     # test_sent = 'The modern society rappresented the perfect ambient to influenced the minds of all the person.'
-    test_sent = """
-        Some people want to try new things while other prefer to do the same that they knew all over their life.  I agree with the statement which says that successful people try to do new things even take risks rathre trying known things.  I agree becuse of severals resons.
+    # test_sent = """
+    #     Some people want to try new things while other prefer to do the same that they knew all over their life.  I agree with the statement which says that successful people try to do new things even take risks rathre trying known things.  I agree becuse of severals resons.
 
-        The frist reson is that  successful people shoud try to do new things otherwase they will not bring new things.  For example, the Neoten is well- known and pioneeir in this feild.  He looked to the apple which fall down from the tree as other but He looked to this case different from other and asked himself why did it fall.  As a result, he interdouced a new law of movement.
-        Secondly, successful people take risk to do something new.  Forthat, although they will not get  benefit of all things, they can success in something new. 
-        Thirdly,  successful people try to do new things with sometime high risk rathre trying known things. Becuse of high risk they can get high benefits and this according to the statment which says high risk gives sometime high rate. This statement which is high risk gives sometime high rate is mainly used in marking.  
-        Becuse of doing new things and  taking risk I agree with successful people try to do new things even take risks rathre trying known things.  
+    #     The frist reson is that  successful people shoud try to do new things otherwase they will not bring new things.  For example, the Neoten is well- known and pioneeir in this feild.  He looked to the apple which fall down from the tree as other but He looked to this case different from other and asked himself why did it fall.  As a result, he interdouced a new law of movement.
+    #     Secondly, successful people take risk to do something new.  Forthat, although they will not get  benefit of all things, they can success in something new. 
+    #     Thirdly,  successful people try to do new things with sometime high risk rathre trying known things. Becuse of high risk they can get high benefits and this according to the statment which says high risk gives sometime high rate. This statement which is high risk gives sometime high rate is mainly used in marking.  
+    #     Becuse of doing new things and  taking risk I agree with successful people try to do new things even take risks rathre trying known things.  
 
-    """
-    sentences = sentence_splitter(test_sent)
+    # """
+    sentences = sentence_splitter(essay)
     error_count = 0
     for sentence in sentences:
         tokens = word_tokenize(sentence)
@@ -205,7 +214,16 @@ def verbs(essay):
             #     if verb_tense_agreement(md_word, verb_tag)==False:
             #         error_count += 1
 
-    print(f"Error count: {error_count}")
+    # print(f"Error count: {error_count}")
 
 
-    return error_count
+    if error_count>=5:
+        return 1
+    elif error_count>=4 and error_count<5:
+        return 2
+    elif error_count>=3 and error_count<4:
+        return 3
+    elif error_count>=2 and error_count<3:
+        return 4
+    else:
+        return 5
