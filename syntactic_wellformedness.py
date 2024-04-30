@@ -79,59 +79,60 @@ pos_tags = [
     "WRB"   # wh-adverb
 ]
 
-doc = nlp('He said, "Who is your daddy?". Do you think it was right to say that?')
-line_count = 1
-for single_sentence in doc.sentences:
-    print("This is for sentence ", line_count)
-    line_count += 1
-    tree = single_sentence.constituency
-    sent_tag_list = []
-    sentence_type = []
-    sentence_category = []
-    for child in tree.children:
-        #sentence type identifier:
-        for children in child.children:
-            phrase_identifier = str(children)
-            phrase_identifier = phrase_identifier.replace('(', '').split()
-            sentence_type.append(phrase_identifier[0])
+def get_wellformedness(doc):
+    # doc = nlp('He said, "Who is your daddy?". Do you think it was right to say that?')
+    line_count = 1
+    for single_sentence in doc.sentences:
+        print("This is for sentence ", line_count)
+        line_count += 1
+        tree = single_sentence.constituency
+        sent_tag_list = []
+        sentence_type = []
+        sentence_category = []
+        for child in tree.children:
+            #sentence type identifier:
+            for children in child.children:
+                phrase_identifier = str(children)
+                phrase_identifier = phrase_identifier.replace('(', '').split()
+                sentence_type.append(phrase_identifier[0])
 
-        # Declarative : NP - VP ...
-        # Imperative  : VP
-        # Yes/No      : VBZ/VBP/MD - NP
-        # Wh-Question : WHNP/WHADVP - SQ
-        print(sentence_type)
-        if (sentence_type[0] == 'NP' and sentence_type[1] == 'VP'):
-            sentence_category = 'declarative'
-        elif (sentence_type[2] == 'NP' and sentence_type[3] == 'VP'):
-            sentence_category = 'declarative'
-        elif (sentence_type[0] == 'VP' and len(sentence_type) == 1):
-            sentence_category = 'imperative'
-        elif ((sentence_type[0] == 'VBZ' or sentence_type[0] == 'VBP' or sentence_type[0] == 'MD') and sentence_type[1] == 'NP'):
-            sentence_category = 'yes_no'
-        elif ((sentence_type[2] == 'VBZ' or sentence_type[2] == 'VBP' or sentence_type[2] == 'MD') and sentence_type[3] == 'NP'):
-            sentence_category = 'yes_no'
-        elif ((sentence_type[0] == 'WHNP' or sentence_type[0] == 'WHADVP') and sentence_type[1] == 'SQ'):
-            sentence_category = 'wh_question'
-        else:
-            sentence_category = 'incorrect'
-        print(sentence_category)
-        
-        i=0
-        for children in child.children:
-            print(f"Type of phrase: {sentence_type[i]}")
-            i += 1
-            sent_tag_list = []
-            sentence = str(children)
-            sentence = sentence.replace('(','')
-            for word in sentence.split():
-                if word in pos_tags:
-                    sent_tag_list.append(word)
-            print(sent_tag_list)
-            error = 0
-            for j in range(len(sent_tag_list)-1):
-                current_tag = sent_tag_list[j]
-                following_tag = sent_tag_list[j+1]
-                if following_tag not in tag_followers[current_tag]:
-                    print(f"Error tag pair: {current_tag} {following_tag}")
-                    error += 1
-            print(f"Number of erroneous tags in this phrase: {error}")
+            # Declarative : NP - VP ...
+            # Imperative  : VP
+            # Yes/No      : VBZ/VBP/MD - NP
+            # Wh-Question : WHNP/WHADVP - SQ
+            print(sentence_type)
+            if (sentence_type[0] == 'NP' and sentence_type[1] == 'VP'):
+                sentence_category = 'declarative'
+            elif (sentence_type[2] == 'NP' and sentence_type[3] == 'VP'):
+                sentence_category = 'declarative'
+            elif (sentence_type[0] == 'VP' and len(sentence_type) == 1):
+                sentence_category = 'imperative'
+            elif ((sentence_type[0] == 'VBZ' or sentence_type[0] == 'VBP' or sentence_type[0] == 'MD') and sentence_type[1] == 'NP'):
+                sentence_category = 'yes_no'
+            elif ((sentence_type[2] == 'VBZ' or sentence_type[2] == 'VBP' or sentence_type[2] == 'MD') and sentence_type[3] == 'NP'):
+                sentence_category = 'yes_no'
+            elif ((sentence_type[0] == 'WHNP' or sentence_type[0] == 'WHADVP') and sentence_type[1] == 'SQ'):
+                sentence_category = 'wh_question'
+            else:
+                sentence_category = 'incorrect'
+            print(sentence_category)
+            
+            i=0
+            for children in child.children:
+                print(f"Type of phrase: {sentence_type[i]}")
+                i += 1
+                sent_tag_list = []
+                sentence = str(children)
+                sentence = sentence.replace('(','')
+                for word in sentence.split():
+                    if word in pos_tags:
+                        sent_tag_list.append(word)
+                print(sent_tag_list)
+                error = 0
+                for j in range(len(sent_tag_list)-1):
+                    current_tag = sent_tag_list[j]
+                    following_tag = sent_tag_list[j+1]
+                    if following_tag not in tag_followers[current_tag]:
+                        print(f"Error tag pair: {current_tag} {following_tag}")
+                        error += 1
+                print(f"Number of erroneous tags in this phrase: {error}")
