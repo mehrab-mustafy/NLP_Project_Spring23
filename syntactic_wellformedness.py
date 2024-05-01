@@ -1,43 +1,51 @@
 import stanza
+import pandas as pd
+import os
+
+def read_file_contents(filename, directory):
+    file_path = os.path.join(directory, filename)
+    with open(file_path, 'r') as file:
+        return file.read()
+    
 nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
 
 # Tag rule set for each of the 36 tags
 tag_followers = {
-    "CC": ["NN", "NNS", "NNP", "NNPS", "PRP", "DT", "VB", "RB", "JJ", "IN", "VBG", "VBN", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "FW"],
+    "CC": ["NN", "NNS", "NNP", "NNPS", "PRP", "DT", "VB", "RB", "RBR", "JJ", "IN", "VBG", "VBN", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "FW"],
     "CD": ["NN", "NNS", "NNP", "NNPS", "JJ", "IN", "DT", "VB", "RB", "VBN", "VBG", "CC", "JJR", "JJS", "VBZ", "VBP", "RP", "TO", "MD", "PRP", "WDT", "PRP$", "FW"],
-    "DT": ["JJ", "JJR", "JJS", "NN", "NNS", "NNP", "NNPS"],
+    "DT": ["JJ", "JJR", "JJS", "NN", "NNS", "NNP", "NNPS", "IN", "VBN", "VBG"],
     "EX": ["VBZ"],
     "FW": ["NN", "NNS", "NNP", "NNPS"],
-    "IN": ["NN", "NNS", "NNP", "NNPS", "PRP", "DT", "VB", "RB", "JJ", "IN", "VBG", "VBN", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "CC", "EX", "PDT", "FW"],
-    "JJ": ["NN", "NNS", "NNP", "NNPS", "CC", "IN", "DT", "VB", "RB", "JJ", "VBG", "VBN", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "PRP", "EX", "PDT", "FW"],
-    "JJR": ["NN", "NNS", "NNP", "NNPS"],
-    "JJS": ["NN", "NNS", "NNP", "NNPS"],
+    "IN": ["NN", "NNS", "NNP", "NNPS", "PRP", "DT", "VB", "RB", "JJ", "IN", "VBG", "VBN", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "CC", "EX", "PDT", "FW", "WP"],
+    "JJ": ["NN", "WRB", "NNS", "NNP", "NNPS", "CC", "IN", "DT", "VB", "RB", "JJ", "JJR", "JJS", "MD", "CD", "WDT", "PRP$", "RP", "TO", "PRP", "EX", "PDT", "FW"],
+    "JJR": ["NN", "NNS", "NNP", "NNPS", "IN"],
+    "JJS": ["NN", "NNS", "NNP", "NNPS", "IN", "RB"],
     "MD": ["VB", "RB"],
-    "NN": ["IN", "DT", "VB", "RB", "JJ", "VBG", "VBN", "CC", "POS", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "PRP", "EX", "PDT", "FW"],
-    "NNS": ["IN", "DT", "VB", "RB", "JJ", "VBG", "VBN", "CC", "POS", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "PRP", "EX", "PDT", "FW"],
-    "NNP": ["IN", "DT", "VB", "RB", "JJ", "VBG", "VBN", "CC", "POS", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "PRP", "EX", "PDT", "FW"],
+    "NN": ["IN", "DT", "VBD", "WP$", "VB", "RB", "JJ", "VBG", "VBN", "CC", "POS", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "PRP", "EX", "PDT", "FW", "WRB"],
+    "NNS": ["IN", "DT", "WRB", "VB", "RB", "JJ", "VBD", "VBG", "VBN", "CC", "POS", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "PRP", "EX", "PDT", "FW", "WP"],
+    "NNP": ["IN", "DT", "VB", "VBD", "RB", "JJ", "NNP", "VBG", "VBN", "CC", "POS", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "PRP", "EX", "PDT", "FW"],
     "NNPS": ["IN", "DT", "VB", "RB", "JJ", "VBG", "VBN", "CC", "POS", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "PRP", "EX", "PDT", "FW"],
     "PDT": ["DT", "JJ", "JJR", "JJS", "NN", "NNS", "NNP", "NNPS"],
     "POS": ["NN", "NNS","JJ", "JJS", "VBG"],
-    "PRP": ["VB", "VBZ", "VBP", "VBD", "MD"],
-    "PRP$": ["NN", "NNS", "NNP", "NNPS"],
-    "RB": ["VB", "JJ", "RB"],
+    "PRP": ["VB", "VBZ", "VBP", "VBD", "MD", "RB", "TO", "IN", "VBN", "CC"],
+    "PRP$": ["NN", "NNS", "NNP", "NNPS", "JJ"],
+    "RB": ["VB", "JJ", "RB", "JJR", "VBP", "VBZ", "VBN", "VBD", "IN", "DT", "VBG", "NNP", "TO", "CD", "PRP"],
     "RBR": ["JJ", "RB"],
     "RBS": ["JJ", "RB"],
-    "RP": ["VB", "RP"],
+    "RP": ["VB", "RP", "PRP$", "IN"],
     "SYM": [],
     "TO": ["VB"],
     "UH": [],
-    "VB": ["DT", "NN", "NNS", "NNP", "NNPS", "PRP", "RB", "JJ", "IN", "VBG", "VBN", "CC", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "EX", "PDT", "FW"],
-    "VBD": ["RB", "VB", "MD", "NN", "NNS", "NNP", "NNPS", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "JJS"],
-    "VBG": ["VB", "TO", "IN", "NN", "NNS", "NNP", "NNPS", "PRP", "DT", "RB", "JJ", "CC", "MD", "PRP$", "VBZ", "VBP", "CD", "WDT", "RP", "PDT", "FW", "JJ", "JJR", "JJS"],
+    "VB": ["DT", "NN", "NNS", "NNP", "NNPS", "PRP", "RB", "JJ", "IN", "VBG", "VBN", "CC", "JJR", "JJS", "VBZ", "VBP", "MD", "CD", "WDT", "PRP$", "RP", "TO", "EX", "PDT", "FW", "RBR"],
+    "VBD": ["RB", "DT", "VB", "TO" "MD", "NN", "NNS", "NNP", "NNPS", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "JJS", "IN"],
+    "VBG": ["VB", "VBN", "WP", "TO", "IN", "NN", "NNS", "NNP", "NNPS", "PRP", "DT", "RB", "JJ", "CC", "MD", "PRP$", "VBZ", "VBP", "CD", "WDT", "RP", "PDT", "FW", "JJ", "JJR", "JJS"],
     "VBN": ["VB", "TO", "IN", "NN", "NNS", "NNP", "NNPS", "PRP", "DT", "RB", "JJ", "CC", "MD", "PRP$", "VBZ", "VBP", "CD", "WDT", "RP", "PDT", "FW", "JJ", "JJR", "JJS"],
-    "VBP": ["VB", "TO", "IN", "NN", "NNS", "NNP", "NNPS", "PRP", "DT", "RB", "JJ", "CC", "MD", "PRP$", "VBZ", "VBN", "CD", "WDT", "RP", "PDT", "FW", "JJ", "JJR", "JJS"],
-    "VBZ": ["RB", "VB", "MD", "NN", "NNS", "NNP", "NNPS", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "JJS"],
-    "WDT": ["VB", "NN", "NNS", "NNP", "NNPS"],
-    "WP": ["VB", "VBZ", "VBP", "VBD", "NN", "NNS", "NNP", "NNPS"],
+    "VBP": ["TO", "WP", "IN", "NN", "NNS", "NNP", "NNPS", "PRP", "DT", "RB", "JJ", "CC", "MD", "PRP$", "VBN", "CD", "WDT", "RP", "PDT", "FW", "JJ", "JJR", "JJS", "WRB", "VBG"],
+    "VBZ": ["RB", "VB", "MD", "NN", "NNS", "WRB", "NNP", "NNPS", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "JJS", "TO", "IN", "DT"],
+    "WDT": ["VB", "NN", "NNS", "NNP", "NNPS", "VBZ", "VBP"],
+    "WP": ["VB", "VBZ", "VBP", "VBD", "NN", "NNS", "NNP", "NNPS", "PRP", "RB"],
     "WP$": ["VB", "NN", "NNS", "NNP", "NNPS"],
-    "WRB": ["VB", "JJ", "RB"]
+    "WRB": ["VB", "JJ", "RB", "NN", "PRP", "TO", "NNS", "VBG"]
 }
 
 pos_tags = [
@@ -80,10 +88,11 @@ pos_tags = [
 ]
 
 def get_wellformedness(doc):
-    # doc = nlp('He said, "Who is your daddy?". Do you think it was right to say that?')
     line_count = 1
+    doc = nlp(doc)
     for single_sentence in doc.sentences:
         print("This is for sentence ", line_count)
+        print(single_sentence.constituency)
         line_count += 1
         tree = single_sentence.constituency
         sent_tag_list = []
@@ -101,18 +110,37 @@ def get_wellformedness(doc):
             # Yes/No      : VBZ/VBP/MD - NP
             # Wh-Question : WHNP/WHADVP - SQ
             print(sentence_type)
-            if (sentence_type[0] == 'NP' and sentence_type[1] == 'VP'):
+            if (sentence_type[0] == 'NP' and (sentence_type[1] == 'VP' or sentence_type[1] == 'ADVP')):
                 sentence_category = 'declarative'
-            elif (sentence_type[2] == 'NP' and sentence_type[3] == 'VP'):
+            elif(sentence_type[1] == 'NP' and sentence_type[2] == 'VP'):
                 sentence_category = 'declarative'
-            elif (sentence_type[0] == 'VP' and len(sentence_type) == 1):
+            elif(sentence_type[0] == 'NP' and sentence_type[-2] == 'VP'):
+                sentence_category = 'declarative'
+            elif (len(sentence_type) > 2 and sentence_type[2] == 'NP' and (sentence_type[3] == 'VP' or sentence_type[3] == 'ADVP')):
+                sentence_category = 'declarative'
+            elif (sentence_type[0] == 'S'):
+                sentence_category = 'declarative'
+            elif (len(sentence_type) > 2 and sentence_type[2] == 'S'):
+                sentence_category = 'declarative'   
+            elif ((sentence_type[0] == 'VP') and (len(sentence_type) == 1 or sentence_type[-1]=='.')):
                 sentence_category = 'imperative'
             elif ((sentence_type[0] == 'VBZ' or sentence_type[0] == 'VBP' or sentence_type[0] == 'MD') and sentence_type[1] == 'NP'):
                 sentence_category = 'yes_no'
-            elif ((sentence_type[2] == 'VBZ' or sentence_type[2] == 'VBP' or sentence_type[2] == 'MD') and sentence_type[3] == 'NP'):
+            elif (len(sentence_type) > 2 and (sentence_type[2] == 'VBZ' or sentence_type[2] == 'VBP' or sentence_type[2] == 'MD') and sentence_type[3] == 'NP'):
                 sentence_category = 'yes_no'
             elif ((sentence_type[0] == 'WHNP' or sentence_type[0] == 'WHADVP') and sentence_type[1] == 'SQ'):
                 sentence_category = 'wh_question'
+            elif(sentence_type[0]=='CC' and sentence_type[2]=='VP'):
+                sentence_category = 'complex_sentence'
+            elif(sentence_type[0]=='ADVP'):
+                for i in range(1, len(sentence_type)):
+                    if(sentence_type[i] == 'PP' or sentence_type[i] == 'NP'):
+                        sentence_category = 'very complex_sentence'  
+            elif(sentence_type[0]=='PP'):
+                for i in range(1, len(sentence_type)-1):
+                    if(sentence_type[i] == 'NP' or sentence_type[i+1] == 'VP'):
+                        sentence_category = 'very complex_sentence'  
+            
             else:
                 sentence_category = 'incorrect'
             print(sentence_category)
@@ -136,3 +164,21 @@ def get_wellformedness(doc):
                         print(f"Error tag pair: {current_tag} {following_tag}")
                         error += 1
                 print(f"Number of erroneous tags in this phrase: {error}")
+                
+
+df = pd.read_csv('index.csv', delimiter=';')
+directory = 'essays/'        
+df['file_contents'] = df.apply(lambda row: read_file_contents(row['filename'], directory), axis=1)
+df['file_contents'] = df['file_contents'].str.replace('\n', '').str.replace('\t', '').str.replace("'", '')
+df['file_contents'] = df['file_contents'].str.replace(r'\s+', ' ', regex=True)
+file_name = '1174920.txt'
+doc = ''
+for i in range(len(df)):
+    if df.at[i,'filename']==file_name:
+        doc = df.at[i, 'file_contents']
+print(doc)
+get_wellformedness(doc)
+
+
+# low  : 1007363.txt , 1096747.txt , 1174920.txt , 1181356.txt , 1388870.txt
+# high : 1392946.txt , 1827588.txt , 1876159.txt , 279212.txt , 618384.txt
