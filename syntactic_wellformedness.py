@@ -11,25 +11,25 @@ nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
 
 # Tag rule set for each of the 36 tags
 tag_followers = {
-    "CC": ["DT", "JJ", "JJR", "NNS", "NNP", "PRP", "RB", "RP", "TO", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ"],
+    "CC": ["DT", "JJ", "JJR", "NNS", "NNP", "PRP", "RB", "RP", "TO", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ", "PRP$"],
     "CD": ["JJ", "NN", "NNS", "NNP", "NNPS"],
     "DT": ["JJ", "JJR", "JJS", "NN", "NNS", "NNP", "NNPS", "IN", "VBN", "VBG"],
-    "EX": ["VBZ"],
+    "EX": ["VBZ", "MD"],
     "FW": ["NN", "NNS", "NNP", "NNPS"],
-    "IN": ["NN", "NNS", "NNP", "NNPS", "PRP", "DT", "VB", "VBG", "VBZ", "VBP", "WDT", "PRP$", "RP", "TO"],
-    "JJ": ["NN", "WRB", "NNS", "NNP", "NNPS", "CC", "DT", "VB", "JJ", "WDT", "PRP$", "TO", "PRP", "PDT"],
+    "IN": ["NN", "NNS", "NNP", "NNPS", "PRP", "DT", "VB", "VBG", "VBZ", "VBP", "WDT", "PRP$", "RP", "TO", "JJ", "EX", "RB"],
+    "JJ": ["NN", "WRB", "NNS", "NNP", "NNPS", "CC", "DT", "VB", "JJ", "WDT", "PRP$", "TO", "PRP", "PDT", "JJ"],
     "JJR": ["NN", "NNS", "NNP", "NNPS", "IN"],
     "JJS": ["NN", "NNS", "NNP", "NNPS", "IN", "RB"],
     "MD": ["VB", "RB"],
-    "NN": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBZ", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB"],
+    "NN": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBZ", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB", "JJ"],
     "NNS": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBP", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB"],
     "NNP": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBZ", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB"],
     "NNPS": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBP", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB"],
     "PDT": ["DT", "JJ", "JJR", "JJS", "NN", "NNS", "NNP", "NNPS"],
     "POS": ["NN", "NNS","JJ", "JJS", "VBG"],
     "PRP": ["VB", "VBZ", "VBP", "VBD", "MD", "RB", "TO", "IN", "VBN", "CC"],
-    "PRP$": ["NN", "NNS","JJ", "JJR", "JJS", "CD"],
-    "RB": ["VB", "JJ", "RB", "JJR", "VBP", "VBZ", "VBN", "VBD", "IN", "DT", "VBG", "NNP", "TO", "CD", "PRP"],
+    "PRP$": ["NN", "NNS","JJ", "JJR", "JJS", "CD", "CC"],
+    "RB": ["VB", "JJ", "RB", "JJR", "VBP", "VBZ", "VBN", "VBD", "IN", "DT", "VBG", "NNP", "TO", "CD", "PRP", "NN", "MD"],
     "RBR": ["JJ", "RB"],
     "RBS": ["JJ", "RB"],
     "RP": ["VB", "RP", "PRP$", "IN"],
@@ -38,10 +38,10 @@ tag_followers = {
     "UH": [],
     "VB": ["DT", "NN", "NNS", "PRP", "RB", "JJ", "IN", "VBG", "CC", "JJR", "CD", "WDT", "PRP$", "RP", "TO", "EX", "RBR"],
     "VBD": ["RB", "TO", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "IN"],
-    "VBG": ["WP", "TO", "IN", "PRP", "DT", "RB", "CC", "PRP$", "CD", "RP", "PDT", "FW"],
+    "VBG": ["WP", "TO", "IN", "PRP", "DT", "RB", "CC", "PRP$", "CD", "RP", "PDT", "FW", "NNS"],
     "VBN": ["TO", "IN", "DT", "RB", "JJ", "CC", "MD", "VBG", "CD", "RP"],
-    "VBP": ["RB", "RBR", "NN", "NNS", "WP", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "TO", "IN"],
-    "VBZ": ["RB", "RBR", "NN", "NNS", "WP", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "TO", "IN"],
+    "VBP": ["RB", "RBR", "NN", "NNS", "WP", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "TO", "IN", "WRB"],
+    "VBZ": ["RB", "RBR", "NN", "NNS", "WP", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "TO", "IN", "DT"],
     "WDT": ["VB", "NN", "NNS", "VBZ", "VBP", "VBD", "JJ"],
     "WP": ["VB", "VBZ", "VBP", "VBD", "NN", "NNS", "PRP", "RB", "MD", "JJ", "CC"],
     "WP$": ["NN", "NNS", "JJ", "CD"],
@@ -114,13 +114,7 @@ def get_wellformedness(doc):
                 sentence_category = 'declarative'
             elif(sentence_type[1] == 'NP' and sentence_type[2] == 'VP'):
                 sentence_category = 'declarative'
-            elif(sentence_type[0] == 'NP' and sentence_type[-2] == 'VP'):
-                sentence_category = 'declarative'
             elif (len(sentence_type) > 2 and sentence_type[2] == 'NP' and (sentence_type[3] == 'VP' or sentence_type[3] == 'ADVP')):
-                sentence_category = 'declarative'
-            elif (sentence_type[0] == 'S'):
-                sentence_category = 'declarative'
-            elif (len(sentence_type) > 2 and sentence_type[2] == 'S'):
                 sentence_category = 'declarative'   
             elif ((sentence_type[0] == 'VP') and (len(sentence_type) == 1 or sentence_type[-1]=='.')):
                 sentence_category = 'imperative'
@@ -130,17 +124,6 @@ def get_wellformedness(doc):
                 sentence_category = 'yes_no'
             elif ((sentence_type[0] == 'WHNP' or sentence_type[0] == 'WHADVP') and sentence_type[1] == 'SQ'):
                 sentence_category = 'wh_question'
-            elif(sentence_type[0]=='CC' and sentence_type[2]=='VP'):
-                sentence_category = 'complex_sentence'
-            elif(sentence_type[0]=='ADVP'):
-                for i in range(1, len(sentence_type)):
-                    if(sentence_type[i] == 'PP' or sentence_type[i] == 'NP'):
-                        sentence_category = 'very complex_sentence'  
-            elif(sentence_type[0]=='PP'):
-                for i in range(1, len(sentence_type)-1):
-                    if(sentence_type[i] == 'NP' or sentence_type[i+1] == 'VP'):
-                        sentence_category = 'very complex_sentence'  
-            
             else:
                 sentence_category = 'incorrect'
             print(sentence_category)
@@ -171,7 +154,7 @@ directory = 'essays/'
 df['file_contents'] = df.apply(lambda row: read_file_contents(row['filename'], directory), axis=1)
 df['file_contents'] = df['file_contents'].str.replace('\n', '').str.replace('\t', '').str.replace("'", '')
 df['file_contents'] = df['file_contents'].str.replace(r'\s+', ' ', regex=True)
-file_name = '1174920.txt'
+file_name = '1827588.txt'
 doc = ''
 for i in range(len(df)):
     if df.at[i,'filename']==file_name:
