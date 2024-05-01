@@ -11,19 +11,19 @@ nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
 
 # Tag rule set for each of the 36 tags
 tag_followers = {
-    "CC": ["DT", "JJ", "JJR", "NNS", "NNP", "PRP", "RB", "RP", "TO", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ", "PRP$"],
+    "CC": ["DT", "JJ", "JJR", "NNS", "NNP", "PRP", "RB", "RP", "TO", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ", "PRP$", "NN", "RBR"],
     "CD": ["JJ", "NN", "NNS", "NNP", "NNPS"],
     "DT": ["JJ", "JJR", "JJS", "NN", "NNS", "NNP", "NNPS", "IN", "VBN", "VBG"],
     "EX": ["VBZ", "MD"],
     "FW": ["NN", "NNS", "NNP", "NNPS"],
-    "IN": ["NN", "NNS", "NNP", "NNPS", "PRP", "DT", "VB", "VBG", "VBZ", "VBP", "WDT", "PRP$", "RP", "TO", "JJ", "EX", "RB"],
+    "IN": ["NN", "NNS", "NNP", "NNPS", "PRP", "DT", "VB", "VBG", "VBZ", "VBP", "WDT", "PRP$", "RP", "TO", "JJ", "EX", "RB", "IN"],
     "JJ": ["NN", "WRB", "NNS", "NNP", "NNPS", "CC", "DT", "VB", "JJ", "WDT", "PRP$", "TO", "PRP", "PDT", "JJ", "IN"],
     "JJR": ["NN", "NNS", "NNP", "NNPS", "IN"],
     "JJS": ["NN", "NNS", "NNP", "NNPS", "IN", "RB"],
     "MD": ["VB", "RB"],
-    "NN": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBZ", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB", "JJ"],
-    "NNS": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBP", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB"],
-    "NNP": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBZ", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB"],
+    "NN": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBZ", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB", "JJ", "NNS", "DT"],
+    "NNS": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBP", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB", "VBG", "PRP", "WP"],
+    "NNP": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBZ", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB", "NNP"],
     "NNPS": ["IN","VBD", "WP$", "RB", "CC", "POS", "VBP", "MD", "WDT", "RP", "TO", "EX", "PDT", "WRB"],
     "PDT": ["DT", "JJ", "JJR", "JJS", "NN", "NNS", "NNP", "NNPS"],
     "POS": ["NN", "NNS","JJ", "JJS", "VBG"],
@@ -36,11 +36,11 @@ tag_followers = {
     "SYM": [],
     "TO": ["VB"],
     "UH": [],
-    "VB": ["DT", "NN", "NNS", "PRP", "RB", "JJ", "IN", "VBG", "CC", "JJR", "CD", "WDT", "PRP$", "RP", "TO", "EX", "RBR"],
-    "VBD": ["RB", "TO", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "IN"],
-    "VBG": ["WP", "TO", "IN", "PRP", "DT", "RB", "CC", "PRP$", "CD", "RP", "PDT", "FW", "NNS"],
+    "VB": ["DT", "NN", "NNS", "PRP", "RB", "JJ", "IN", "VBG", "CC", "JJR", "CD", "WDT", "PRP$", "RP", "TO", "EX", "RBR", "VBN"],
+    "VBD": ["RB", "TO", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "IN", "DT"],
+    "VBG": ["WP", "TO", "IN", "PRP", "DT", "RB", "CC", "PRP$", "CD", "RP", "PDT", "FW", "NNS", "EX", "JJ"],
     "VBN": ["TO", "IN", "DT", "RB", "JJ", "CC", "MD", "VBG", "CD", "RP"],
-    "VBP": ["RB", "RBR", "NN", "NNS", "WP", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "TO", "IN", "WRB"],
+    "VBP": ["RB", "RBR", "NN", "NNS", "WP", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "TO", "IN", "WRB", "CD"],
     "VBZ": ["RB", "RBR", "NN", "NNS", "WP", "PRP", "PRP$", "VBG", "VBN", "RP", "JJ", "JJR", "TO", "IN", "DT"],
     "WDT": ["VB", "NN", "NNS", "VBZ", "VBP", "VBD", "JJ"],
     "WP": ["VB", "VBZ", "VBP", "VBD", "NN", "NNS", "PRP", "RB", "MD", "JJ", "CC"],
@@ -154,7 +154,7 @@ directory = 'essays/'
 df['file_contents'] = df.apply(lambda row: read_file_contents(row['filename'], directory), axis=1)
 df['file_contents'] = df['file_contents'].str.replace('\n', '').str.replace('\t', '').str.replace("'", '')
 df['file_contents'] = df['file_contents'].str.replace(r'\s+', ' ', regex=True)
-file_name = '1388870.txt'
+file_name = '1007363.txt'
 doc = ''
 for i in range(len(df)):
     if df.at[i,'filename']==file_name:
