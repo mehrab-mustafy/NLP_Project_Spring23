@@ -17,7 +17,7 @@ tag_followers = {
     "EX": ["VBZ", "MD"],
     "FW": ["NN", "NNS", "NNP", "NNPS"],
     "IN": ["NN", "NNS", "NNP", "NNPS", "PRP", "DT", "VB", "VBG", "VBZ", "VBP", "WDT", "PRP$", "RP", "TO", "JJ", "EX", "RB"],
-    "JJ": ["NN", "WRB", "NNS", "NNP", "NNPS", "CC", "DT", "VB", "JJ", "WDT", "PRP$", "TO", "PRP", "PDT", "JJ"],
+    "JJ": ["NN", "WRB", "NNS", "NNP", "NNPS", "CC", "DT", "VB", "JJ", "WDT", "PRP$", "TO", "PRP", "PDT", "JJ", "IN"],
     "JJR": ["NN", "NNS", "NNP", "NNPS", "IN"],
     "JJS": ["NN", "NNS", "NNP", "NNPS", "IN", "RB"],
     "MD": ["VB", "RB"],
@@ -154,7 +154,7 @@ directory = 'essays/'
 df['file_contents'] = df.apply(lambda row: read_file_contents(row['filename'], directory), axis=1)
 df['file_contents'] = df['file_contents'].str.replace('\n', '').str.replace('\t', '').str.replace("'", '')
 df['file_contents'] = df['file_contents'].str.replace(r'\s+', ' ', regex=True)
-file_name = '1827588.txt'
+file_name = '1388870.txt'
 doc = ''
 for i in range(len(df)):
     if df.at[i,'filename']==file_name:
