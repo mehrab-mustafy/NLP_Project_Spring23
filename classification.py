@@ -1,36 +1,52 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential
-from keras.layers import Dense
+from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-# Load your DataFrame
-# Assuming your DataFrame is named df
+df = pd.read_csv('data.csv')
 
 # Step 1: Prepare the Data
-X = df[['length', 'mistakes', 'agreement', 'verbs', 'syntactic coherence', 'topic coherence', 'essay coherence']]
-y = df['labels']
+X = df[['sentence_count', 'spelling_mistakes', 'agreement', 'verbs', 'c3']]
+y = df['grade'].map({'high': 1, 'low': 0})  # Convert labels to binary
 
 # Step 2: Split Data into Training and Testing Sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Step 3: Normalize the Data
-scaler = MinMaxScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
+# Step 3: Define and Train the Model
+# MLP:
+mlp_classifier = MLPClassifier(hidden_layer_sizes=(64, 32), activation='relu', solver='adam', max_iter=1000)
+mlp_classifier.fit(X_train, y_train)
+y_pred = mlp_classifier.predict(X_test)
+accuracy1 = accuracy_score(y_test, y_pred)
+precision1 = precision_score(y_test, y_pred)
+recall1 = recall_score(y_test, y_pred)
+f1_1 = f1_score(y_test, y_pred)
+print('MLP:')
+print(f'Accuracy: {accuracy1}, Precision: {precision1}, Recall: {recall1}, F1 Score: {f1_1}')
+print()
 
-# Step 4: Build the Neural Network Model
-model = Sequential()
-model.add(Dense(64, activation='relu', input_shape=(X_train_scaled.shape[1],)))
-model.add(Dense(32, activation='relu'))
-model.add(Dense(1, activation='sigmoid'))  # Output layer with sigmoid activation for binary classification
+# Logistic Regression
+logistic_regression = LogisticRegression()
+logistic_regression.fit(X_train, y_train)
+y_pred = logistic_regression.predict(X_test)
+accuracy2 = accuracy_score(y_test, y_pred)
+precision2 = precision_score(y_test, y_pred)
+recall2 = recall_score(y_test, y_pred)
+f1_2 = f1_score(y_test, y_pred)
+print('Logistic Regression:')
+print(f'Accuracy: {accuracy2}, Precision: {precision2}, Recall: {recall2}, F1 Score: {f1_2}')
+print()
 
-# Step 5: Compile the Model
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-
-# Step 6: Train the Model
-model.fit(X_train_scaled, y_train, epochs=10, batch_size=32, verbose=1)
-
-# Step 7: Evaluate the Model
-loss, accuracy = model.evaluate(X_test_scaled, y_test)
-print(f'Test Loss: {loss}, Test Accuracy: {accuracy}')
+# Naive Bayes
+naive_bayes = GaussianNB()
+naive_bayes.fit(X_train, y_train)
+y_pred = naive_bayes.predict(X_test)
+accuracy3 = accuracy_score(y_test, y_pred)
+precision3 = precision_score(y_test, y_pred)
+recall3 = recall_score(y_test, y_pred)
+f1_3 = f1_score(y_test, y_pred)
+print('Naive Bayes')
+print(f'Accuracy: {accuracy3}, Precision: {precision3}, Recall: {recall3}, F1 Score: {f1_3}')
+print()
