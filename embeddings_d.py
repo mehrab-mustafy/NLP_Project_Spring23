@@ -1,6 +1,7 @@
 import numpy as np
 import pickle as pkl
 import nltk
+import re
 
 # Before running code that makes use of Word2Vec, you will need to download the provided w2v.pkl file
 # which contains the pre-trained word2vec representations
@@ -64,6 +65,7 @@ def string2vec(word2vec, sentence):
     for token in token_list:
         token_embedding = w2v(word2vec, token)
         embedding += token_embedding
+    # print(len(token_list))
     embedding /= len(token_list)
 
     return embedding
@@ -86,6 +88,90 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
 
     return sim
 
+# Function to return a list of sentences from a given text passage based on defined delimiters
+def sentence_tokenizer(text):
+    '''returns list of sentences based on defined delimiter
+    '''
+    sentences = []
+    current_sentence = ''
+    sentence_delimiters = ['.', '!', '?'] 
+    for char in text:
+        if char not in sentence_delimiters:
+            current_sentence += char
+        else:
+            current_sentence += char
+            sentences.append(current_sentence.strip())
+            current_sentence = ''
+    # if current_sentence:
+    #     sentences.append(current_sentence.strip())
+    return sentences
+
+# Function to return embeddings of each sentence in a given text passage as a list of embeddings
+def get_sentence_embedding_list(text):
+    word2vec = load_w2v(EMBEDDING_FILE)
+    sentence_embedding_list = []
+    current_sentence_embedding = np.zeros(300, )
+    sentences = sentence_tokenizer(text)
+    for sentence in sentences:
+        current_sentence_embedding = string2vec(word2vec, sentence)
+        sentence_embedding_list.append(current_sentence_embedding)
+    return np.array(sentence_embedding_list)
+
+# Function to get the second sentence from an essay prompt
+def get_second_sentence(text):
+    # Split the text into sentences
+    sentences = re.split(r'[?.!]', text)
+    
+    # Remove any empty strings from the list of sentences
+    sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
+    
+    # Check if there are at least two sentences
+    if len(sentences) >= 2:
+        return sentences[1]
+    else:
+        return "No second sentence found"
+    
+# Function to map the raw score obtained for essay-prompt pairs using cosine similarity to [0-5] range
+def d1_mapping(raw_score):
+    mapped_score = 0
+    if raw_score<0.557:
+        mapped_score = 1
+    elif raw_score>=0.557 and raw_score<0.637:
+        mapped_score = 2
+    elif raw_score>=0.637 and raw_score<0.737:
+        mapped_score = 3
+    elif raw_score>=0.737 and raw_score<0.82:
+        mapped_score = 4
+    elif raw_score>=0.82:
+        mapped_score = 5
+    return mapped_score
+
+# Function to get the cosine similarity between a given prompt and essay
+def cosine_similarity_prompt_essay(prompt, essay):
+    word2vec = load_w2v(EMBEDDING_FILE)
+
+    # add a period at the of the essay if it does not exist. This helps in parsing.
+    if not essay.endswith('.'):
+        essay += '.'
+    stop_words = ["a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with"]
+    # Remove stop words from sentence
+    essay = ' '.join([word for word in essay.split() if word.lower() not in stop_words])
+
+    cos_sim = 0.0
+    prompt_topic = get_second_sentence(prompt)
+    if prompt_topic == "No second sentence found":
+        return cos_sim
+    prompt_topic_embedding = string2vec(word2vec, prompt_topic)
+
+    sentence_embedding_list = get_sentence_embedding_list(essay)
+    essay_embedding = np.mean(sentence_embedding_list, axis=0)
+
+    cos_sim = cosine_similarity(prompt_topic_embedding, essay_embedding)
+
+    mapped_cos_sim = d1_mapping(cos_sim)
+
+    return mapped_cos_sim
+
 # Use this main function to test your code. Sample code is provided to assist with the assignment;
 # feel free to change/remove it. Some of the provided sample code will help you in answering
 # questions, but it won't work correctly until all functions have been implemented.
@@ -94,19 +180,26 @@ if __name__ == "__main__":
     print("Loading Word2Vec representations....")
     word2vec = load_w2v(EMBEDDING_FILE)
 
-    # Example cosine similarity calculation for string to vec
-    string1 = "Trump has said that he designated the materials he took to Mar-a-Lago as personal records while still in office"
-    string2 = "There were also reports of tornadoes and damage in Mercer and Logan counties in Ohio, according to the weather service"
-    string3 = "Smith was in court for the hearing, as well, and Trump eyed him during a break in the proceedings and again when they concluded"
+    # # Example cosine similarity calculation for string to vec
+    # string1 = "Trump has said that he designated the materials he took to Mar-a-Lago as personal records while still in office"
+    # string2 = "There were also reports of tornadoes and damage in Mercer and Logan counties in Ohio, according to the weather service"
+    # string3 = "Smith was in court for the hearing, as well, and Trump eyed him during a break in the proceedings and again when they concluded"
 
-    s2v_string1 = string2vec(word2vec, string1)
-    s2v_string2 = string2vec(word2vec, string2)
-    s2v_string3 = string2vec(word2vec, string3)
+    # s2v_string1 = string2vec(word2vec, string1)
+    # s2v_string2 = string2vec(word2vec, string2)
+    # s2v_string3 = string2vec(word2vec, string3)
 
-    sim_1 = cosine_similarity(s2v_string1, s2v_string2)
-    print("Cosine similarity for String 1 and String 2: {0:.2}".format(sim_1))
-    sim_2 = cosine_similarity(s2v_string2, s2v_string3)
-    print("Cosine similarity for String 2 and String 3: {0:.2}".format(sim_2))
-    sim_3 = cosine_similarity(s2v_string1, s2v_string3)
-    print("Cosine similarity for String 1 and String 3: {0:.2}".format(sim_3))
+    # sim_1 = cosine_similarity(s2v_string1, s2v_string2)
+    # print("Cosine similarity for String 1 and String 2: {0:.2}".format(sim_1))
+    # sim_2 = cosine_similarity(s2v_string2, s2v_string3)
+    # print("Cosine similarity for String 2 and String 3: {0:.2}".format(sim_2))
+    # sim_3 = cosine_similarity(s2v_string1, s2v_string3)
+    # print("Cosine similarity for String 1 and String 3: {0:.2}".format(sim_3))
+
+    essay = ''
+    with open('essays/1249928.txt', 'r') as file:
+        # Read the contents of the file
+        essay = file.read()
+    prompt = "Do you agree or disagree with the following statement? Most advertisements make products seem much better than they really are. Use specific reasons and examples to support your answer."
+    print(cosine_similarity_prompt_essay(prompt, essay))
 
