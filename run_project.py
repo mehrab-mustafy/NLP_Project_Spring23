@@ -8,6 +8,7 @@ nltk.download('punkt')
 nltk.download('words')
 from sample_code_1 import num_sentences, spelling_mistakes
 from sample_code_2 import agreement, verbs
+from embeddings_d import cosine_similarity_prompt_essay
 
 
 def read_file_contents(filename, directory):
@@ -50,13 +51,21 @@ def main():
         print("File not found:", file_path)
     except Exception as e:
         print("An error occurred:", e)
+
+    essay_directory = file_path
+    essay_index_name = essay_directory.replace("essays/",'')
+    prompt = ""
+    df = pd.read_csv("index.csv", sep=";", index_col=False)
+    for i in range(len(df)):
+        if df.at[i,'filename']==essay_index_name:
+            prompt = df.at[i,'prompt']
         
     a = num_sentences(content)
     b = spelling_mistakes(content)
     c_1 = agreement(content)
     c_2 = verbs(content)
     
-    c_3 = 0
+    c_3 = cosine_similarity_prompt_essay(prompt=prompt, essay=content)
     d_1 = 0
     d_2 = 0
     
