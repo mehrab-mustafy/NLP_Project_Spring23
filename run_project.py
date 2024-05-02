@@ -9,7 +9,7 @@ nltk.download('words')
 from sample_code_1 import num_sentences, spelling_mistakes
 from sample_code_2 import agreement, verbs
 from syntactic_wellformedness import get_wellformedness
-from embeddings_d import cosine_similarity_prompt_essay
+from embeddings_d import cosine_similarity_prompt_essay, get_d2
 
 
 def read_file_contents(filename, directory):
@@ -68,7 +68,7 @@ def main():
     
     c_3 = get_wellformedness(content)
     d_1 = cosine_similarity_prompt_essay(prompt=prompt, essay=content)
-    d_2 = 0
+    d_2 = get_d2(content)
     
     print(f"a:{a}, b:{b}, c1:{c_1}, c2:{c_2}, c3: {c_3}, d1: {d_1}, d2: {d_2}")
     Final_Score = 2*a - b + c_1 + c_2 + 2*c_3 + 3*d_1 + 2*d_2
