@@ -58,6 +58,7 @@ def w2v(word2vec, token):
 # each token in the string, and averages across those embeddings to produce a
 # single, averaged embedding for the entire input.
 def string2vec(word2vec, sentence):
+    word2vec = load_w2v(EMBEDDING_FILE)
     embedding = np.zeros(300, )
 
     # Write your code here:
@@ -171,6 +172,46 @@ def cosine_similarity_prompt_essay(prompt, essay):
     mapped_cos_sim = d1_mapping(cos_sim)
 
     return mapped_cos_sim
+
+#Returns cosine similarity between two sentences
+def calculate_sentence_pair_similarity(sentence1, sentence2):
+    sentence1_embedding = string2vec('',sentence1)
+    sentence2_embedding = string2vec('',sentence2)
+    cos_sim = cosine_similarity(sentence1_embedding, sentence2_embedding)
+    return cos_sim
+
+# Function to get coherence score of an essay. Calculate pairwise sentence coherence, maps the value between -2*std and 2*std and returns a value between 1-5
+def get_d2(content):
+    mapped_score = 0
+    sentence_list = sentence_tokenizer(content)
+    sentence_pair_coherence_score_list = []
+
+    # if there is only one sentence in the essay, return 0
+    if (len(sentence_list)==1):
+        return 0
+    
+    pairwise_similarity_list = []
+    for i in range(len(sentence_list)-1):
+        sentence1 = sentence_list[i]
+        sentence2 = sentence_list[i+1]
+        cos_sim = calculate_sentence_pair_similarity(sentence1, sentence2)
+        pairwise_similarity_list.append(cos_sim)
+    mean = np.mean(pairwise_similarity_list)
+    std = np.std(pairwise_similarity_list)
+    for i in range(len(pairwise_similarity_list)):
+        if pairwise_similarity_list[i]<=(-2)*std:
+            mapped_score = 1
+        elif pairwise_similarity_list[i]>(-2)*std and pairwise_similarity_list[i]<=(-1)*std:
+            mapped_score = 2
+        elif pairwise_similarity_list[i]>(-1)*std and pairwise_similarity_list[i]<=(1)*std:
+            mapped_score = 3
+        elif pairwise_similarity_list[i]>(1)*std and pairwise_similarity_list[i]<=(2)*std:
+            mapped_score = 4
+        elif pairwise_similarity_list[i]>(2)*std:
+            mapped_score = 5
+        sentence_pair_coherence_score_list.append(mapped_score)
+    essay_coherence_score = np.mean(sentence_pair_coherence_score_list)
+    return round(essay_coherence_score,0)
 
 # Use this main function to test your code. Sample code is provided to assist with the assignment;
 # feel free to change/remove it. Some of the provided sample code will help you in answering
