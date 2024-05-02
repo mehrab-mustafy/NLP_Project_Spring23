@@ -1,11 +1,6 @@
 import stanza
 import pandas as pd
 import os
-
-def read_file_contents(filename, directory):
-    file_path = os.path.join(directory, filename)
-    with open(file_path, 'r') as file:
-        return file.read()
     
 nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
 
