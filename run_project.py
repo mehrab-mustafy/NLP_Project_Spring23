@@ -8,6 +8,7 @@ nltk.download('punkt')
 nltk.download('words')
 from sample_code_1 import num_sentences, spelling_mistakes
 from sample_code_2 import agreement, verbs
+from syntactic_wellformedness import get_wellformedness
 from embeddings_d import cosine_similarity_prompt_essay
 
 
@@ -65,8 +66,8 @@ def main():
     c_1 = agreement(content)
     c_2 = verbs(content)
     
-    c_3 = cosine_similarity_prompt_essay(prompt=prompt, essay=content)
-    d_1 = 0
+    c_3 = get_wellformedness(content)
+    d_1 = cosine_similarity_prompt_essay(prompt=prompt, essay=content)
     d_2 = 0
     
     print(f"a:{a}, b:{b}, c1:{c_1}, c2:{c_2}, c3: {c_3}, d1: {d_1}, d2: {d_2}")
