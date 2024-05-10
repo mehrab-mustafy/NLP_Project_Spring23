@@ -171,7 +171,7 @@ def verbs(essay):
     error_count = 0
     tokens = word_tokenize(essay)
     pos_tags = tags_after_token_preprocessing(tokens)
-    print(pos_tags)
+    # print(pos_tags)
     for i in range(len(pos_tags)-1):
         # print(i)
         if pos_tags[i] in ['MD', 'VBP', 'VBN'] and pos_tags[i+1] in ['RB'] and i+2 < len(pos_tags):

@@ -6,10 +6,15 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 df = pd.read_csv('data.csv')
+df.dropna(how='any', inplace=True)
+# # Step 1: Prepare the Data
 
-# Step 1: Prepare the Data
-X = df[['sentence_count', 'spelling_mistakes', 'agreement', 'verbs', 'c3']]
+# df.to_csv('test.csv')
+X = df[['sentence_count', 'spelling_mistakes', 'agreement', 'verbs', 'c3', 'd1', 'd2']]
 y = df['grade'].map({'high': 1, 'low': 0})  # Convert labels to binary
+
+
+
 
 # Step 2: Split Data into Training and Testing Sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
